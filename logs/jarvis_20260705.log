@@ -1,0 +1,31 @@
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:53 | Ollama client initialized - URL: http://localhost:11434, Model: llama2
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:23 | File manager initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:24 | Search manager initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-05 11:44:15 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:190 | Approval manager initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:66 | Database initialized at: C:\Users\edb\JarvisWorkspace\jarvis.db
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:66 | Database initialized at: C:\Users\edb\JarvisWorkspace\jarvis.db
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:47 | History manager initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:190 | Approval manager initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:66 | Database initialized at: C:\Users\edb\JarvisWorkspace\jarvis.db
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:47 | History manager initialized
+2026-07-05 11:44:16 | INFO     | jarvis | __init__:71 | Tool dispatcher initialized
+2026-07-05 11:44:16 | INFO     | jarvis | main:14 | ============================================================
+2026-07-05 11:44:16 | INFO     | jarvis | main:15 | Jarvis AI Assistant - Starting
+2026-07-05 11:44:16 | INFO     | jarvis | main:16 | ============================================================
+2026-07-05 11:44:16 | INFO     | jarvis | main:17 | Workspace: C:\Users\edb\JarvisWorkspace
+2026-07-05 11:44:16 | INFO     | jarvis | main:18 | Database: C:\Users\edb\JarvisWorkspace\jarvis.db
+2026-07-05 11:44:16 | INFO     | jarvis | main:19 | Ollama URL: http://localhost:11434
+2026-07-05 11:44:16 | INFO     | jarvis | main:20 | Ollama Model: llama2
+2026-07-05 11:44:16 | INFO     | jarvis | on_mount:174 | Jarvis application started
