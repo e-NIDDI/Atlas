@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from jarvis.safety.paths import PathValidator
 from jarvis.safety.whitelist import SafetyWhitelist
+from jarvis.tools.registry import tool_registry
 from jarvis.logger import logger
 
 
@@ -58,6 +59,15 @@ class SafetyValidator:
         """
         logger.debug(f"Validating tool request: {tool_name}")
         
+        # Check if tool exists in the registry
+        tool = tool_registry.get_tool(tool_name)
+        if tool is None:
+            return ValidationResult(
+                is_valid=False,
+                error_message=f"Unknown tool: {tool_name}",
+                requires_confirmation=False
+            )
+        
         # Check if tool requires confirmation
         requires_confirmation = self.whitelist.requires_confirmation(tool_name)
         
@@ -68,8 +78,20 @@ class SafetyValidator:
         elif tool_name == "list_projects":
             return ValidationResult(is_valid=True, requires_confirmation=requires_confirmation)
         
-        elif tool_name in ["read_file", "write_file", "create_file", "list_files", "search_files", "search_content"]:
+        elif tool_name in ["read_file", "write_file", "append_file", "delete_file",
+                           "create_folder", "delete_folder", "rename_item", "move_item",
+                           "copy_item", "list_directory", "search_files", "search_content",
+                           "get_file_metadata"]:
             return self._validate_file_tool(tool_name, args, requires_confirmation)
+        
+        elif tool_name in ["read_document", "summarize_document", "locate_in_document"]:
+            return self._validate_document_tool(tool_name, args, requires_confirmation)
+        
+        elif tool_name in ["create_note", "search_notes", "list_notes",
+                           "create_task", "list_tasks", "complete_task",
+                           "remember_project_context", "get_project_context",
+                           "search_memory"]:
+            return self._validate_secretary_tool(tool_name, args, requires_confirmation)
         
         elif tool_name == "git_status":
             return self._validate_git_tool(tool_name, args, requires_confirmation)
@@ -78,10 +100,9 @@ class SafetyValidator:
             return self._validate_test_tool(tool_name, args, requires_confirmation)
         
         else:
-            # Unknown tool
+            # Fallback: allow the tool with basic validation
             return ValidationResult(
-                is_valid=False,
-                error_message=f"Unknown tool: {tool_name}",
+                is_valid=True,
                 requires_confirmation=requires_confirmation
             )
     
@@ -108,7 +129,7 @@ class SafetyValidator:
             if "name" not in args:
                 return ValidationResult(
                     is_valid=False,
-                    error_message="Missing required argument: name",
+                    error_message=f"Missing required argument 'name' for create_project (received args: {args})",
                     requires_confirmation=requires_confirmation
                 )
             
@@ -152,14 +173,14 @@ class SafetyValidator:
             if "old_name" not in args:
                 return ValidationResult(
                     is_valid=False,
-                    error_message="Missing required argument: old_name",
+                    error_message=f"Missing required argument 'old_name' for rename_project (received args: {args})",
                     requires_confirmation=requires_confirmation
                 )
             
             if "new_name" not in args:
                 return ValidationResult(
                     is_valid=False,
-                    error_message="Missing required argument: new_name",
+                    error_message=f"Missing required argument 'new_name' for rename_project (received args: {args})",
                     requires_confirmation=requires_confirmation
                 )
         
@@ -189,43 +210,62 @@ class SafetyValidator:
         """
         warnings = []
         
-        # Check required arguments
-        if tool_name in ["read_file", "write_file", "create_file"]:
-            if "path" not in args:
-                return ValidationResult(
-                    is_valid=False,
-                    error_message=f"Missing required argument: path",
-                    requires_confirmation=requires_confirmation
-                )
+        # Tools that require a "path" argument
+        path_required_tools = [
+            "read_file", "write_file", "append_file", "delete_file",
+            "create_folder", "delete_folder", "get_file_metadata",
+        ]
+        if tool_name in path_required_tools and "path" not in args:
+            return ValidationResult(
+                is_valid=False,
+                error_message=f"Missing required argument 'path' for {tool_name} (received args: {args})",
+                requires_confirmation=requires_confirmation
+            )
         
-        if tool_name == "write_file":
-            if "content" not in args:
-                return ValidationResult(
-                    is_valid=False,
-                    error_message="Missing required argument: content",
-                    requires_confirmation=requires_confirmation
-                )
+        # Tools that require "content"
+        if tool_name in ["write_file", "append_file"] and "content" not in args:
+            return ValidationResult(
+                is_valid=False,
+                error_message=f"Missing required argument 'content' for {tool_name} (received args: {args})",
+                requires_confirmation=requires_confirmation
+            )
         
-        if tool_name == "search_files":
-            if "pattern" not in args:
-                return ValidationResult(
-                    is_valid=False,
-                    error_message="Missing required argument: pattern",
-                    requires_confirmation=requires_confirmation
-                )
+        # rename/move/copy require two path args
+        if tool_name == "rename_item":
+            for arg in ["old_path", "new_path"]:
+                if arg not in args:
+                    return ValidationResult(
+                        is_valid=False,
+                        error_message=f"Missing required argument '{arg}' for {tool_name} (received args: {args})",
+                        requires_confirmation=requires_confirmation
+                    )
+        
+        if tool_name in ["move_item", "copy_item"]:
+            for arg in ["source", "destination"]:
+                if arg not in args:
+                    return ValidationResult(
+                        is_valid=False,
+                        error_message=f"Missing required argument '{arg}' for {tool_name} (received args: {args})",
+                        requires_confirmation=requires_confirmation
+                    )
+        
+        if tool_name == "search_files" and "pattern" not in args:
+            return ValidationResult(
+                is_valid=False,
+                error_message=f"Missing required argument 'pattern' for {tool_name} (received args: {args})",
+                requires_confirmation=requires_confirmation
+            )
 
-        if tool_name == "search_content":
-            if "query" not in args:
-                return ValidationResult(
-                    is_valid=False,
-                    error_message="Missing required argument: query",
-                    requires_confirmation=requires_confirmation
-                )
+        if tool_name == "search_content" and "query" not in args:
+            return ValidationResult(
+                is_valid=False,
+                error_message=f"Missing required argument 'query' for {tool_name} (received args: {args})",
+                requires_confirmation=requires_confirmation
+            )
         
         # Validate paths
-        if "path" in args:
-            path = args["path"]
-            
+        path = args.get("path") or args.get("old_path") or args.get("source")
+        if path:
             # Check if path is safe
             if not self.path_validator.is_safe_path(path):
                 return ValidationResult(
@@ -294,6 +334,125 @@ class SafetyValidator:
         """
         # Test tools are generally safe
         logger.debug(f"Test tool validated: {tool_name}")
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation
+        )
+    
+    def _validate_document_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """
+        Validate document-related tools.
+        
+        Args:
+            tool_name: Tool name
+            args: Tool arguments
+            requires_confirmation: Whether confirmation is required
+            
+        Returns:
+            ValidationResult object
+        """
+        # Check required arguments
+        if tool_name in ["read_document", "summarize_document"]:
+            if "path" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'path' for {tool_name} (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        if tool_name == "locate_in_document":
+            if "path" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'path' for locate_in_document (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+            if "query" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'query' for locate_in_document (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        logger.debug(f"Document tool validated: {tool_name}")
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation
+        )
+    
+    def _validate_secretary_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """
+        Validate secretary-related tools.
+        
+        Args:
+            tool_name: Tool name
+            args: Tool arguments
+            requires_confirmation: Whether confirmation is required
+            
+        Returns:
+            ValidationResult object
+        """
+        # Check required arguments
+        if tool_name == "create_note":
+            if "title" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'title' for create_note (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        if tool_name == "create_task":
+            if "title" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'title' for create_task (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        if tool_name == "complete_task":
+            if "task_id" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'task_id' for complete_task (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        if tool_name == "remember_project_context":
+            for arg in ["project", "key", "value"]:
+                if arg not in args:
+                    return ValidationResult(
+                        is_valid=False,
+                        error_message=f"Missing required argument '{arg}' for remember_project_context (received args: {args})",
+                        requires_confirmation=requires_confirmation
+                    )
+        
+        if tool_name == "get_project_context":
+            if "project" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'project' for get_project_context (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        if tool_name == "search_memory":
+            if "query" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'query' for search_memory (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
+        
+        logger.debug(f"Secretary tool validated: {tool_name}")
         return ValidationResult(
             is_valid=True,
             requires_confirmation=requires_confirmation

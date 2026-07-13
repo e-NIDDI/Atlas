@@ -227,17 +227,41 @@ class ResponseParser:
         Returns:
             Tuple of (is_valid, error_message)
         """
-        # Check tool name
+        # Check tool name — complete list matching register_tools.py
         valid_tools = {
+            # Project tools
             "create_project",
             "list_projects",
             "rename_project",
+            # Filesystem tools
             "read_file",
             "write_file",
-            "create_file",
-            "list_files",
+            "append_file",
+            "delete_file",
+            "create_folder",
+            "delete_folder",
+            "rename_item",
+            "move_item",
+            "copy_item",
+            "list_directory",
             "search_files",
             "search_content",
+            "get_file_metadata",
+            # Document tools
+            "read_document",
+            "summarize_document",
+            "locate_in_document",
+            # Secretary tools
+            "create_note",
+            "search_notes",
+            "list_notes",
+            "create_task",
+            "list_tasks",
+            "complete_task",
+            "remember_project_context",
+            "get_project_context",
+            "search_memory",
+            # Command tools
             "git_status",
             "run_tests",
         }
@@ -253,15 +277,32 @@ class ResponseParser:
             "rename_project": ["old_name", "new_name"],
             "read_file": ["path"],
             "write_file": ["path", "content"],
-            "create_file": ["path"],
+            "append_file": ["path", "content"],
+            "delete_file": ["path"],
+            "create_folder": ["path"],
+            "delete_folder": ["path"],
+            "rename_item": ["old_path", "new_path"],
+            "move_item": ["source", "destination"],
+            "copy_item": ["source", "destination"],
             "search_files": ["pattern"],
             "search_content": ["query"],
+            "get_file_metadata": ["path"],
+            "read_document": ["path"],
+            "summarize_document": ["path"],
+            "locate_in_document": ["path", "query"],
+            "create_note": ["title", "content"],
+            "search_notes": ["query"],
+            "create_task": ["title"],
+            "complete_task": ["task_id"],
+            "remember_project_context": ["project", "key", "value"],
+            "get_project_context": ["project"],
+            "search_memory": ["query"],
         }
         
         if tool_request.tool in required_args:
             missing = [arg for arg in required_args[tool_request.tool] if arg not in tool_request.args]
             if missing:
-                error = f"Missing required arguments for {tool_request.tool}: {', '.join(missing)}"
+                error = f"Missing required arguments for {tool_request.tool}: {', '.join(missing)} (received args: {tool_request.args})"
                 logger.warning(error)
                 return False, error
         

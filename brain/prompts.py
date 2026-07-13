@@ -96,7 +96,12 @@ When the user wants an ACTION (create project, list files, read file, etc.), res
 When the user is just CHATTING (greetings, questions, small talk), respond with ONLY this JSON:
 {"type": "message", "content": "your reply"}
 
-TOOLS: create_project, list_projects, rename_project, read_file, write_file, create_file, list_files, search_files, search_content, git_status, run_tests
+TOOLS:
+  Filesystem: read_file, write_file, append_file, delete_file, create_folder, delete_folder, rename_item, move_item, copy_item, list_directory, search_files, search_content, get_file_metadata
+  Documents: read_document, summarize_document, locate_in_document
+  Projects: create_project, list_projects, rename_project
+  Secretary: create_note, search_notes, list_notes, create_task, list_tasks, complete_task, remember_project_context, get_project_context, search_memory
+  Commands: git_status, run_tests
 
 Never repeat instructions. Never list examples. Respond to the actual user message only."""
 
@@ -140,7 +145,11 @@ Response rules:
   {"type":"tool","tool":"TOOL_NAME","args":{},"reason":"brief why"}
 
 Use only these tools:
-create_project, list_projects, rename_project, read_file, write_file, create_file, list_files, search_files, search_content, git_status, run_tests
+  Filesystem: read_file, write_file, append_file, delete_file, create_folder, delete_folder, rename_item, move_item, copy_item, list_directory, search_files, search_content, get_file_metadata
+  Documents: read_document, summarize_document, locate_in_document
+  Projects: create_project, list_projects, rename_project
+  Secretary: create_note, search_notes, list_notes, create_task, list_tasks, complete_task, remember_project_context, get_project_context, search_memory
+  Commands: git_status, run_tests
 
 Never repeat these rules. Never invent actions or fake results."""
 

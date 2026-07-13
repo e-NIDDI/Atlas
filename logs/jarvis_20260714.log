@@ -1,0 +1,347 @@
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:23 | File manager initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:25 | Search manager initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:50:58 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:50:58 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:50:58 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:50:58 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 00:50:58 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 00:50:58 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:50:58 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:50:58 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:50:58 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:50:58 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:50:58 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 00:51:01 | INFO     | jarvis | process_message:80 | Processing message: Hello
+2026-07-14 00:51:01 | INFO     | jarvis | send_message:154 | Processing user message: Hello
+2026-07-14 00:51:01 | ERROR    | jarvis | process_message:180 | Error processing message: 'OllamaRequest' object has no attribute 'model_dump'
+Traceback (most recent call last):
+  File "/home/edb/code/Atlas/jarvis/brain/agent.py", line 124, in process_message
+    async for chunk in self.chat_manager.send_message(user_message, stream=True):
+  File "/home/edb/code/Atlas/jarvis/brain/chat.py", line 165, in send_message
+    async for chunk in self.ollama_client.chat(messages, stream=stream):
+  File "/home/edb/code/Atlas/jarvis/brain/ollama.py", line 133, in chat
+    payload = self._build_request(messages, stream)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/edb/code/Atlas/jarvis/brain/ollama.py", line 54, in _build_request
+    ).model_dump()
+      ^^^^^^^^^^
+AttributeError: 'OllamaRequest' object has no attribute 'model_dump'
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:23 | File manager initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:25 | Search manager initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:52:21 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:52:21 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:52:21 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:52:21 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:52:21 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 00:52:21 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 00:52:21 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:52:21 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:52:21 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:52:22 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:52:22 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:52:22 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 00:52:23 | INFO     | jarvis | process_message:80 | Processing message: hi
+2026-07-14 00:52:23 | INFO     | jarvis | send_message:154 | Processing user message: hi
+2026-07-14 00:53:20 | INFO     | jarvis | close:277 | Chat manager closed
+2026-07-14 00:53:20 | INFO     | jarvis | close:363 | Jarvis agent closed
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:23 | File manager initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:25 | Search manager initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:53:43 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:53:43 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:53:44 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:53:44 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:53:44 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 00:53:44 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 00:53:44 | INFO     | jarvis | register_all_tools:14 | Registering all tools...
+2026-07-14 00:53:44 | INFO     | jarvis | register_all_tools:35 | Registered 11 tools
+2026-07-14 00:53:44 | INFO     | jarvis | load_projects:227 | Loaded 12 projects from workspace
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:53:44 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 00:53:44 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 00:53:44 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 00:53:54 | INFO     | jarvis | process_message:80 | Processing message: Hey jarvis, can you list me some project ideas for python
+2026-07-14 00:53:54 | INFO     | jarvis | send_message:154 | Processing user message: Hey jarvis, can you list me some project ideas for python
+2026-07-14 00:55:09 | INFO     | jarvis | process_message:80 | Processing message: nice, just wanted to ask whats your asigned home directory?
+2026-07-14 00:55:09 | INFO     | jarvis | send_message:154 | Processing user message: nice, just wanted to ask whats your asigned home directory?
+2026-07-14 00:56:22 | INFO     | jarvis | process_message:80 | Processing message: Well, can you go into the home directory and create a projects folder, go into the folder and make a
+2026-07-14 00:56:22 | INFO     | jarvis | send_message:154 | Processing user message: Well, can you go into the home directory and create a projects folder, go into the folder and make a
+2026-07-14 00:56:55 | INFO     | jarvis | process_message:80 | Processing message: do you have access to my computer?
+2026-07-14 00:56:55 | INFO     | jarvis | send_message:154 | Processing user message: do you have access to my computer?
+2026-07-14 00:58:32 | INFO     | jarvis | process_message:80 | Processing message: can you read your own source code? if yes then tell me if you are allowed to change, edit, create, d
+2026-07-14 00:58:32 | INFO     | jarvis | send_message:154 | Processing user message: can you read your own source code? if yes then tell me if you are allowed to change, edit, create, d
+2026-07-14 01:01:20 | INFO     | jarvis | process_message:80 | Processing message: can you give me nice ideas about a php project
+2026-07-14 01:01:20 | INFO     | jarvis | send_message:154 | Processing user message: can you give me nice ideas about a php project
+2026-07-14 01:01:55 | WARNING  | jarvis | sanitize_response:91 | Detected prompt regurgitation — using fallback response
+2026-07-14 01:01:55 | WARNING  | jarvis | sanitize_response:91 | Detected prompt regurgitation — using fallback response
+2026-07-14 01:03:35 | INFO     | jarvis | process_message:80 | Processing message: go into the home directory and create a new folder called "projets"
+2026-07-14 01:03:35 | INFO     | jarvis | send_message:154 | Processing user message: go into the home directory and create a new folder called "projets"
+2026-07-14 01:05:09 | INFO     | jarvis | process_message:80 | Processing message: stopno i want you to explicitly create it urself
+2026-07-14 01:05:09 | INFO     | jarvis | send_message:154 | Processing user message: stopno i want you to explicitly create it urself
+2026-07-14 01:05:14 | INFO     | jarvis | close:277 | Chat manager closed
+2026-07-14 01:05:14 | INFO     | jarvis | close:363 | Jarvis agent closed
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:33 | FileSystemManager initialized: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:60 | Document manager initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:42 | Secretary manager initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:33:37 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:33:37 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:21 | Embedding generator initialized (model: nomic-embed-text)
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:24 | Vector store initialized (0 vectors)
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:25 | RAG pipeline initialized (chunk_size=512, overlap=32)
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:33:37 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:33:37 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:33:38 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 01:33:38 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 01:33:38 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:33:38 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:33:38 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:33:38 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:33:38 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:33:38 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 01:33:41 | INFO     | jarvis | process_message:80 | Processing message: hey jarvis
+2026-07-14 01:33:41 | INFO     | jarvis | send_message:154 | Processing user message: hey jarvis
+2026-07-14 01:34:09 | INFO     | jarvis | close:277 | Chat manager closed
+2026-07-14 01:34:09 | INFO     | jarvis | close:363 | Jarvis agent closed
+2026-07-14 01:34:16 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:33 | FileSystemManager initialized: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:60 | Document manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:42 | Secretary manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:34:17 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:34:17 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:21 | Embedding generator initialized (model: nomic-embed-text)
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:24 | Vector store initialized (0 vectors)
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:25 | RAG pipeline initialized (chunk_size=512, overlap=32)
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:34:17 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:34:17 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 01:34:17 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 01:34:17 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:34:17 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:34:17 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:42 | Safety validator initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:34:17 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:34:17 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:34:17 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 01:34:22 | INFO     | jarvis | process_message:80 | Processing message: hey jarvis, what can you do?
+2026-07-14 01:34:22 | INFO     | jarvis | send_message:154 | Processing user message: hey jarvis, what can you do?
+2026-07-14 01:35:53 | INFO     | jarvis | process_message:80 | Processing message: can you create a new folder named projects please
+2026-07-14 01:35:53 | INFO     | jarvis | send_message:154 | Processing user message: can you create a new folder named projects please
+2026-07-14 01:36:00 | INFO     | jarvis | parse:121 | Parsed tool request: create_folder
+2026-07-14 01:36:00 | INFO     | jarvis | send_message:189 | Tool request detected: create_folder
+2026-07-14 01:36:00 | INFO     | jarvis | parse:121 | Parsed tool request: create_folder
+2026-07-14 01:36:00 | INFO     | jarvis | process_message:154 | Tool request detected: create_folder
+2026-07-14 01:36:00 | INFO     | jarvis | dispatch:93 | Dispatching tool: create_folder
+2026-07-14 01:36:00 | WARNING  | jarvis | dispatch:100 | Validation failed: Unknown tool: create_folder
+2026-07-14 01:43:40 | INFO     | jarvis | close:277 | Chat manager closed
+2026-07-14 01:43:40 | INFO     | jarvis | close:363 | Jarvis agent closed
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:75 | Tool registry initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:33 | FileSystemManager initialized: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:60 | Document manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:42 | Secretary manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:35 | Project manager initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:62 | Command manager initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:43:45 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:43 | Safety validator initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:43:45 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:21 | Embedding generator initialized (model: nomic-embed-text)
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:24 | Vector store initialized (0 vectors)
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:25 | RAG pipeline initialized (chunk_size=512, overlap=32)
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:43 | Safety validator initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:43:45 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:43:45 | INFO     | jarvis | check_connection:77 | Ollama connection successful
+2026-07-14 01:43:45 | INFO     | jarvis | list_models:100 | Available models: ['qwen2.5:1.5b']
+2026-07-14 01:43:45 | INFO     | jarvis | register_all_tools:47 | Registering all tools...
+2026-07-14 01:43:45 | INFO     | jarvis | register_all_tools:89 | Registered 30 tools
+2026-07-14 01:43:45 | INFO     | jarvis | load_projects:227 | Loaded 15 projects from workspace
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:45 | Ollama client initialized - URL: http://localhost:11434, Model: qwen2.5:1.5b
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:39 | Conversation history initialized (max 50 turns)
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:137 | Chat manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:20 | Path validator initialized with workspace: /home/edb
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:24 | Safety whitelist initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:43 | Safety validator initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:43:45 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:70 | Tool dispatcher initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:66 | Database initialized at: /home/edb/jarvis.db
+2026-07-14 01:43:45 | INFO     | jarvis | initialize_schema:160 | Database schema initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:49 | History manager initialized
+2026-07-14 01:43:45 | INFO     | jarvis | __init__:62 | Jarvis agent initialized
+2026-07-14 01:43:53 | INFO     | jarvis | process_message:80 | Processing message: can you create a new folder named projects please
+2026-07-14 01:43:53 | INFO     | jarvis | send_message:154 | Processing user message: can you create a new folder named projects please
+2026-07-14 01:45:02 | INFO     | jarvis | parse:121 | Parsed tool request: create_folder
+2026-07-14 01:45:02 | INFO     | jarvis | send_message:189 | Tool request detected: create_folder
+2026-07-14 01:45:02 | INFO     | jarvis | parse:121 | Parsed tool request: create_folder
+2026-07-14 01:45:02 | INFO     | jarvis | process_message:154 | Tool request detected: create_folder
+2026-07-14 01:45:02 | INFO     | jarvis | dispatch:93 | Dispatching tool: create_folder
+2026-07-14 01:45:02 | WARNING  | jarvis | dispatch:100 | Validation failed: Missing required argument: path
+2026-07-14 01:55:33 | INFO     | jarvis | close:277 | Chat manager closed
+2026-07-14 01:55:33 | INFO     | jarvis | close:363 | Jarvis agent closed

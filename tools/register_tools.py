@@ -1,10 +1,43 @@
-"""Tool registration for Jarvis."""
+"""Tool registration for Jarvis.
+
+Registers ALL tools with the tool registry.
+This is the single source of truth for what tools are available.
+"""
 
 from jarvis.tools.registry import tool_registry
 from jarvis.tools.projects import CreateProjectTool, ListProjectsTool, RenameProjectTool
-from jarvis.tools.files import ReadFileTool, WriteFileTool, CreateFileTool, ListFilesTool
+from jarvis.tools.filesystem import (
+    ReadFileTool,
+    WriteFileTool,
+    AppendFileTool,
+    DeleteFileTool,
+    CreateFolderTool,
+    DeleteFolderTool,
+    RenameItemTool,
+    MoveItemTool,
+    CopyItemTool,
+    ListDirectoryTool,
+    SearchFilesTool,
+    SearchContentTool,
+    GetMetadataTool,
+)
+from jarvis.tools.documents import (
+    ReadDocumentTool,
+    SummarizeDocumentTool,
+    LocateInDocumentTool,
+)
+from jarvis.tools.secretary import (
+    CreateNoteTool,
+    SearchNotesTool,
+    ListNotesTool,
+    CreateTaskTool,
+    ListTasksTool,
+    CompleteTaskTool,
+    RememberProjectContextTool,
+    GetProjectContextTool,
+    SearchMemoryTool,
+)
 from jarvis.tools.commands import GitStatusTool, RunTestsTool
-from jarvis.tools.search import SearchFilesTool, SearchContentTool
 
 from jarvis.logger import logger
 
@@ -12,26 +45,47 @@ from jarvis.logger import logger
 def register_all_tools() -> None:
     """Register all available tools with the tool registry."""
     logger.info("Registering all tools...")
-    
-    # Project tools
+
+    # ── Project tools ──────────────────────────
     tool_registry.register(CreateProjectTool())
     tool_registry.register(ListProjectsTool())
     tool_registry.register(RenameProjectTool())
-    
-    # File tools
+
+    # ── Filesystem tools ───────────────────────
     tool_registry.register(ReadFileTool())
     tool_registry.register(WriteFileTool())
-    tool_registry.register(CreateFileTool())
-    tool_registry.register(ListFilesTool())
+    tool_registry.register(AppendFileTool())
+    tool_registry.register(DeleteFileTool())
+    tool_registry.register(CreateFolderTool())
+    tool_registry.register(DeleteFolderTool())
+    tool_registry.register(RenameItemTool())
+    tool_registry.register(MoveItemTool())
+    tool_registry.register(CopyItemTool())
+    tool_registry.register(ListDirectoryTool())
     tool_registry.register(SearchFilesTool())
-    
-    # Command tools
+    tool_registry.register(SearchContentTool())
+    tool_registry.register(GetMetadataTool())
+
+    # ── Document tools ─────────────────────────
+    tool_registry.register(ReadDocumentTool())
+    tool_registry.register(SummarizeDocumentTool())
+    tool_registry.register(LocateInDocumentTool())
+
+    # ── Secretary tools ────────────────────────
+    tool_registry.register(CreateNoteTool())
+    tool_registry.register(SearchNotesTool())
+    tool_registry.register(ListNotesTool())
+    tool_registry.register(CreateTaskTool())
+    tool_registry.register(ListTasksTool())
+    tool_registry.register(CompleteTaskTool())
+    tool_registry.register(RememberProjectContextTool())
+    tool_registry.register(GetProjectContextTool())
+    tool_registry.register(SearchMemoryTool())
+
+    # ── Command tools ──────────────────────────
     tool_registry.register(GitStatusTool())
     tool_registry.register(RunTestsTool())
-    
-    # Search tools
-    tool_registry.register(SearchContentTool())
-    
+
     logger.info(f"Registered {len(tool_registry.tools)} tools")
     logger.debug(f"Available tools: {tool_registry.list_tools()}")
 
