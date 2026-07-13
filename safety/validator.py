@@ -64,8 +64,11 @@ class SafetyValidator:
         # Validate based on tool type
         if tool_name in ["create_project", "rename_project"]:
             return self._validate_project_tool(tool_name, args, requires_confirmation)
+
+        elif tool_name == "list_projects":
+            return ValidationResult(is_valid=True, requires_confirmation=requires_confirmation)
         
-        elif tool_name in ["read_file", "write_file", "create_file", "list_files", "search_files"]:
+        elif tool_name in ["read_file", "write_file", "create_file", "list_files", "search_files", "search_content"]:
             return self._validate_file_tool(tool_name, args, requires_confirmation)
         
         elif tool_name == "git_status":
@@ -116,8 +119,24 @@ class SafetyValidator:
                     error_message="Project name cannot be empty",
                     requires_confirmation=requires_confirmation
                 )
+
+            parent = args.get("parent")
+            if parent:
+                try:
+                    parent_path = self.path_validator.validate_path(str(parent), must_exist=False)
+                    if parent_path.exists() and not parent_path.is_dir():
+                        return ValidationResult(
+                            is_valid=False,
+                            error_message=f"Parent path is not a directory: {parent}",
+                            requires_confirmation=requires_confirmation,
+                        )
+                except ValueError as e:
+                    return ValidationResult(
+                        is_valid=False,
+                        error_message=str(e),
+                        requires_confirmation=requires_confirmation,
+                    )
             
-            # Sanitize project name
             try:
                 safe_name = self.path_validator.sanitize_filename(str(name))
                 if safe_name != str(name).strip():
@@ -192,6 +211,14 @@ class SafetyValidator:
                 return ValidationResult(
                     is_valid=False,
                     error_message="Missing required argument: pattern",
+                    requires_confirmation=requires_confirmation
+                )
+
+        if tool_name == "search_content":
+            if "query" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument: query",
                     requires_confirmation=requires_confirmation
                 )
         

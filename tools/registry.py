@@ -126,35 +126,35 @@ class ToolRegistry:
             "required_args": tool.get_required_args(),
         }
     
-    async def execute_tool(self, name: str, **kwargs) -> ToolResult:
+    async def execute_tool(self, tool_name: str, **kwargs) -> ToolResult:
         """
         Execute a tool by name.
         
         Args:
-            name: Tool name
+            tool_name: Tool name
             **kwargs: Tool arguments
             
         Returns:
             ToolResult object
         """
-        tool = self.tools.get(name)
+        tool = self.tools.get(tool_name)
         
         if not tool:
-            error = f"Tool not found: {name}"
+            error = f"Tool not found: {tool_name}"
             logger.error(error)
             return ToolResult(
                 success=False,
-                message=f"Tool '{name}' not found",
+                message=f"Tool '{tool_name}' not found",
                 error=error
             )
         
-        logger.info(f"Executing tool: {name} with args: {kwargs}")
+        logger.info(f"Executing tool: {tool_name} with args: {kwargs}")
         
         try:
             # Validate arguments
             is_valid, error_msg = tool.validate_args(**kwargs)
             if not is_valid:
-                logger.error(f"Invalid arguments for {name}: {error_msg}")
+                logger.error(f"Invalid arguments for {tool_name}: {error_msg}")
                 return ToolResult(
                     success=False,
                     message=f"Invalid arguments: {error_msg}",
@@ -163,11 +163,11 @@ class ToolRegistry:
             
             # Execute tool
             result = await tool.execute(**kwargs)
-            logger.info(f"Tool {name} executed: success={result.success}")
+            logger.info(f"Tool {tool_name} executed: success={result.success}")
             return result
             
         except Exception as e:
-            error = f"Error executing tool {name}: {e}"
+            error = f"Error executing tool {tool_name}: {e}"
             logger.error(error, exc_info=True)
             return ToolResult(
                 success=False,

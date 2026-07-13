@@ -34,13 +34,19 @@ class ProjectManager:
         self.projects: Dict[str, Project] = {}
         logger.info(f"Project manager initialized with workspace: {self.workspace_root}")
     
-    def create_project(self, name: str, description: Optional[str] = None) -> Project:
+    def create_project(
+        self,
+        name: str,
+        description: Optional[str] = None,
+        parent: Optional[str] = None,
+    ) -> Project:
         """
         Create a new project.
         
         Args:
             name: Project name
             description: Optional project description
+            parent: Optional parent directory inside workspace (e.g. "php")
             
         Returns:
             Created Project object
@@ -48,44 +54,52 @@ class ProjectManager:
         Raises:
             ValueError: If project already exists or name is invalid
         """
-        # Validate project name
         if not name or not name.strip():
             raise ValueError("Project name cannot be empty")
         
-        # Sanitize project name
         safe_name = self._sanitize_name(name)
         
-        # Check if project already exists
-        if safe_name in self.projects:
-            raise ValueError(f"Project '{safe_name}' already exists")
+        if parent:
+            parent = parent.strip().strip("/\\")
+            if parent in (".", ".."):
+                raise ValueError("Invalid parent directory")
+            safe_parent = "/".join(
+                self._sanitize_name(part) for part in Path(parent).parts
+            )
+            rel_key = f"{safe_parent}/{safe_name}"
+            project_path = (self.workspace_root / safe_parent / safe_name).resolve()
+        else:
+            rel_key = safe_name
+            project_path = (self.workspace_root / safe_name).resolve()
         
-        # Create project path
-        project_path = self.workspace_root / safe_name
+        # Ensure path stays inside workspace
+        try:
+            project_path.relative_to(self.workspace_root.resolve())
+        except ValueError:
+            raise ValueError(f"Project path is outside workspace: {project_path}")
         
-        # Check if directory already exists
+        if rel_key in self.projects:
+            raise ValueError(f"Project '{rel_key}' already exists")
+        
         if project_path.exists():
             raise ValueError(f"Project directory already exists: {project_path}")
         
-        # Create project directory
         try:
             project_path.mkdir(parents=True, exist_ok=False)
             logger.info(f"Created project directory: {project_path}")
         except OSError as e:
             raise ValueError(f"Failed to create project directory: {e}")
         
-        # Create project object
         project = Project(
             id=None,
-            name=safe_name,
+            name=rel_key,
             path=project_path,
             created_at=datetime.now(),
-            description=description
+            description=description,
         )
         
-        # Add to projects dict
-        self.projects[safe_name] = project
-        
-        logger.info(f"Project created: {safe_name}")
+        self.projects[rel_key] = project
+        logger.info(f"Project created: {rel_key}")
         return project
     
     def list_projects(self) -> List[Project]:
@@ -204,18 +218,24 @@ class ProjectManager:
         try:
             for item in self.workspace_root.iterdir():
                 if item.is_dir() and not item.name.startswith('.'):
-                    # Check if it's a valid project (has some content or is a git repo)
-                    project = Project(
-                        id=None,
-                        name=item.name,
-                        path=item,
-                        created_at=datetime.fromtimestamp(item.stat().st_ctime)
-                    )
-                    self.projects[item.name] = project
+                    self._register_project_dir(item, item.name)
+                    for sub in item.iterdir():
+                        if sub.is_dir() and not sub.name.startswith('.'):
+                            rel = f"{item.name}/{sub.name}"
+                            self._register_project_dir(sub, rel)
             
             logger.info(f"Loaded {len(self.projects)} projects from workspace")
         except Exception as e:
             logger.error(f"Error loading projects: {e}")
+
+    def _register_project_dir(self, path: Path, key: str) -> None:
+        """Register a directory as a project."""
+        self.projects[key] = Project(
+            id=None,
+            name=key,
+            path=path,
+            created_at=datetime.fromtimestamp(path.stat().st_ctime),
+        )
     
     def _sanitize_name(self, name: str) -> str:
         """
@@ -246,6 +266,7 @@ class ProjectManager:
 
 # Global project manager instance
 project_manager = ProjectManager()
+project_manager.load_projects()
 
 
 class CreateProjectTool(BaseTool):
@@ -274,8 +295,9 @@ class CreateProjectTool(BaseTool):
         try:
             name = kwargs["name"]
             description = kwargs.get("description")
+            parent = kwargs.get("parent")
             
-            project = project_manager.create_project(name, description)
+            project = project_manager.create_project(name, description, parent=parent)
             
             return ToolResult(
                 success=True,

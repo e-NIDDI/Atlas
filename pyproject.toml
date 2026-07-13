@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jarvis"
+version = "0.1.0"
+description = "Local AI workspace assistant powered by Ollama"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+jarvis = "jarvis.cli.app:main"
+
+[tool.setuptools]
+packages = [
+    "jarvis",
+    "jarvis.brain",
+    "jarvis.cli",
+    "jarvis.memory",
+    "jarvis.safety",
+    "jarvis.tools",
+]
+package-dir = {"jarvis" = "."}
+
+[tool.setuptools.package-data]
+jarvis = ["logs/.gitkeep"]

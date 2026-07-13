@@ -2,7 +2,7 @@
 
 from jarvis.tools.registry import tool_registry
 from jarvis.tools.projects import CreateProjectTool, ListProjectsTool, RenameProjectTool
-from jarvis.tools.files import ReadFileTool, WriteFileTool, CreateFileTool, ListFilesTool, SearchFilesTool
+from jarvis.tools.files import ReadFileTool, WriteFileTool, CreateFileTool, ListFilesTool
 from jarvis.tools.commands import GitStatusTool, RunTestsTool
 from jarvis.tools.search import SearchFilesTool, SearchContentTool
 

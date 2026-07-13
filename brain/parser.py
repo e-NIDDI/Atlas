@@ -105,6 +105,15 @@ class ResponseParser:
         # Try to parse as ToolRequest
         try:
             data = json.loads(json_str)
+
+            # Ollama error payloads: {"error": "..."}
+            if "error" in data and "type" not in data:
+                from jarvis.brain.errors import format_ollama_error
+                return ParseResult(
+                    is_tool_request=False,
+                    message=format_ollama_error(data["error"]),
+                    raw_response=response,
+                )
             
             # Check if it's a tool request
             if data.get("type") == "tool":
@@ -167,6 +176,22 @@ class ResponseParser:
         Returns:
             Extracted JSON string or None
         """
+        # Strip markdown code fences (common with llama2 and similar models)
+        stripped = text.strip()
+        if stripped.startswith("```"):
+            lines = stripped.splitlines()
+            if len(lines) >= 2:
+                # Remove opening ```json or ``` line and closing ```
+                inner_lines = lines[1:]
+                if inner_lines and inner_lines[-1].strip() == "```":
+                    inner_lines = inner_lines[:-1]
+                stripped = "\n".join(inner_lines).strip()
+                try:
+                    json.loads(stripped)
+                    return stripped
+                except json.JSONDecodeError:
+                    pass
+
         # First, try to find JSON with "type": "tool" or "type": "message"
         tool_match = self.tool_pattern.search(text)
         if tool_match:
@@ -212,6 +237,7 @@ class ResponseParser:
             "create_file",
             "list_files",
             "search_files",
+            "search_content",
             "git_status",
             "run_tests",
         }
@@ -229,6 +255,7 @@ class ResponseParser:
             "write_file": ["path", "content"],
             "create_file": ["path"],
             "search_files": ["pattern"],
+            "search_content": ["query"],
         }
         
         if tool_request.tool in required_args:

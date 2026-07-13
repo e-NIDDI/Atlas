@@ -1,12 +1,12 @@
 """Ollama client for Jarvis brain layer."""
 
-import asyncio
 import json
 from typing import AsyncGenerator, Optional, Dict, Any, List
 import httpx
 from pydantic import BaseModel, Field
 
 from jarvis.config import config
+from jarvis.brain.errors import format_ollama_error
 from jarvis.logger import logger
 
 
@@ -22,14 +22,6 @@ class OllamaRequest(BaseModel):
     messages: List[OllamaMessage]
     stream: bool = True
     options: Dict[str, Any] = Field(default_factory=dict)
-
-
-class OllamaResponse(BaseModel):
-    """Ollama API response structure."""
-    model: str
-    created_at: str
-    message: OllamaMessage
-    done: bool
 
 
 class OllamaClient:
@@ -51,6 +43,26 @@ class OllamaClient:
         self.model = model or config.ollama_model
         self.client = httpx.AsyncClient(timeout=120.0)
         logger.info(f"Ollama client initialized - URL: {self.base_url}, Model: {self.model}")
+
+    def _build_request(self, messages: List[OllamaMessage], stream: bool) -> dict:
+        """Build the API request payload."""
+        return OllamaRequest(
+            model=self.model,
+            messages=messages,
+            stream=stream,
+            options=config.ollama_options,
+        ).model_dump()
+
+    def _parse_error_body(self, status_code: int, body: str) -> str:
+        """Extract and format an error from an Ollama response body."""
+        raw = body
+        try:
+            data = json.loads(body)
+            if "error" in data:
+                raw = data["error"]
+        except json.JSONDecodeError:
+            pass
+        return format_ollama_error(raw if raw else f"HTTP {status_code}")
     
     async def check_connection(self) -> bool:
         """
@@ -91,6 +103,17 @@ class OllamaClient:
         except Exception as e:
             logger.error(f"Error listing models: {e}")
             return []
+
+    async def get_model_details(self) -> List[Dict[str, Any]]:
+        """Get detailed info about installed models."""
+        try:
+            response = await self.client.get(f"{self.base_url}/api/tags")
+            if response.status_code == 200:
+                return response.json().get("models", [])
+            return []
+        except Exception as e:
+            logger.error(f"Error getting model details: {e}")
+            return []
     
     async def chat(
         self,
@@ -107,48 +130,70 @@ class OllamaClient:
         Yields:
             Response chunks
         """
-        request = OllamaRequest(
-            model=self.model,
-            messages=messages,
-            stream=stream
-        )
-        
+        payload = self._build_request(messages, stream)
         logger.debug(f"Sending chat request with {len(messages)} messages")
         
         try:
-            response = await self.client.post(
-                f"{self.base_url}/api/chat",
-                json=request.model_dump(),
-                timeout=120.0
-            )
-            
-            if response.status_code != 200:
-                error_msg = f"Ollama API error: {response.status_code} - {response.text}"
-                logger.error(error_msg)
-                yield f"Error: {error_msg}"
-                return
-            
             if stream:
-                # Stream response
                 full_response = ""
-                for line in response.iter_lines():
-                    if line:
+                async with self.client.stream(
+                    "POST",
+                    f"{self.base_url}/api/chat",
+                    json=payload,
+                    timeout=120.0,
+                ) as response:
+                    if response.status_code != 200:
+                        body = await response.aread()
+                        error_msg = self._parse_error_body(
+                            response.status_code, body.decode()
+                        )
+                        logger.error(f"Ollama API error: {error_msg}")
+                        yield error_msg
+                        return
+
+                    async for line in response.aiter_lines():
+                        if not line:
+                            continue
                         try:
                             data = json.loads(line)
-                            if "message" in data and "content" in data["message"]:
-                                chunk = data["message"]["content"]
-                                full_response += chunk
-                                yield chunk
-                            
-                            if data.get("done", False):
-                                logger.debug(f"Chat response complete: {len(full_response)} chars")
-                                break
                         except json.JSONDecodeError as e:
                             logger.warning(f"Failed to parse stream line: {e}")
                             continue
+
+                        if "error" in data:
+                            error_msg = format_ollama_error(data["error"])
+                            logger.error(f"Ollama stream error: {error_msg}")
+                            yield error_msg
+                            return
+
+                        if "message" in data and "content" in data["message"]:
+                            chunk = data["message"]["content"]
+                            full_response += chunk
+                            yield chunk
+
+                        if data.get("done", False):
+                            logger.debug(f"Chat response complete: {len(full_response)} chars")
+                            break
             else:
-                # Non-streaming response
+                response = await self.client.post(
+                    f"{self.base_url}/api/chat",
+                    json=payload,
+                    timeout=120.0,
+                )
+
+                if response.status_code != 200:
+                    error_msg = self._parse_error_body(
+                        response.status_code, response.text
+                    )
+                    logger.error(f"Ollama API error: {error_msg}")
+                    yield error_msg
+                    return
+
                 data = response.json()
+                if "error" in data:
+                    yield format_ollama_error(data["error"])
+                    return
+
                 if "message" in data and "content" in data["message"]:
                     content = data["message"]["content"]
                     logger.debug(f"Chat response: {len(content)} chars")
@@ -157,13 +202,13 @@ class OllamaClient:
                     yield "Error: Invalid response from Ollama"
                     
         except httpx.TimeoutException:
-            error_msg = "Request to Ollama timed out"
+            error_msg = "Request to Ollama timed out. The model may be too large for your RAM."
             logger.error(error_msg)
-            yield f"Error: {error_msg}"
+            yield error_msg
         except Exception as e:
-            error_msg = f"Error communicating with Ollama: {e}"
-            logger.error(error_msg)
-            yield f"Error: {error_msg}"
+            error_msg = format_ollama_error(str(e))
+            logger.error(f"Error communicating with Ollama: {e}")
+            yield error_msg
     
     async def chat_complete(
         self,

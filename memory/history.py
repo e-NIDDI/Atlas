@@ -44,6 +44,8 @@ class HistoryManager:
             db: Database instance
         """
         self.db = db or Database()
+        self.db.connect()
+        self.db.initialize_schema()
         logger.info("History manager initialized")
     
     def log_action(

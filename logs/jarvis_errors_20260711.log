@@ -1,0 +1,25 @@
+2026-07-11 20:19:34 | ERROR    | jarvis | chat:158 | Ollama API error: 500 - {"error":"llama runner process has terminated: signal: killed"}
+2026-07-11 20:20:29 | ERROR    | jarvis | chat:158 | Ollama API error: 500 - {"error":"llama runner process has terminated: signal: killed"}
+2026-07-11 20:30:00 | ERROR    | jarvis | chat:130 | Ollama API error: 500 - {"error":"llama runner process has terminated: signal: killed"}
+2026-07-11 20:37:25 | ERROR    | jarvis | chat:188 | Ollama API error: The model ran out of memory and was killed by your system.
+
+7B models need ~6GB+ RAM. You have ~5.5GB, so they won't load reliably.
+
+Fix options:
+  1. Use a smaller model:
+       ollama pull tinyllama
+       jarvis -m tinyllama
+     or:
+       ollama pull llama3.2:3b
+       jarvis -m llama3.2:3b
+  2. Free RAM — close browsers, IDEs, other apps
+  3. Unload models: ollama stop llama2
+2026-07-11 20:48:48 | ERROR    | jarvis | dispatch:191 | Error executing tool create_project: ToolRegistry.execute_tool() got multiple values for argument 'name'
+Traceback (most recent call last):
+  File "/home/edb/code/Atlas/tools/dispatcher.py", line 160, in dispatch
+    result = await self.tool_registry.execute_tool(tool_name, **args)
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+TypeError: ToolRegistry.execute_tool() got multiple values for argument 'name'
+2026-07-11 21:08:24 | ERROR    | jarvis | connect:76 | Failed to connect to database: unable to open database file
+2026-07-11 21:10:36 | ERROR    | jarvis | check_connection:85 | Error checking Ollama connection: 
+2026-07-11 21:11:32 | ERROR    | jarvis | check_connection:85 | Error checking Ollama connection: 

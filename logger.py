@@ -69,5 +69,14 @@ def setup_logger(
     return logger
 
 
+def set_console_log_level(level: str) -> None:
+    """Adjust stderr log verbosity (keeps file logging unchanged)."""
+    import sys
+    log_level = getattr(logging, level.upper(), logging.INFO)
+    for handler in logger.handlers:
+        if isinstance(handler, logging.StreamHandler) and handler.stream is sys.stderr:
+            handler.setLevel(log_level)
+
+
 # Global logger instance
 logger = setup_logger()

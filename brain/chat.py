@@ -6,6 +6,10 @@ from dataclasses import dataclass, field
 
 from jarvis.brain.ollama import OllamaClient, OllamaMessage
 from jarvis.brain.parser import ResponseParser, ParseResult
+from jarvis.brain.prompts import get_system_prompt
+from jarvis.brain.errors import is_error_response
+from jarvis.brain.sanitize import sanitize_response, should_buffer_response
+from jarvis.config import config
 from jarvis.logger import logger
 
 
@@ -75,12 +79,12 @@ class ConversationHistory:
         Returns:
             List of OllamaMessage objects
         """
-        messages = []
+        messages = [OllamaMessage(role="system", content=get_system_prompt(config.ollama_model))]
         
         for turn in self.turns:
             messages.append(OllamaMessage(role=turn.role, content=turn.content))
         
-        logger.debug(f"Converted {len(messages)} turns to Ollama format")
+        logger.debug(f"Converted {len(messages)} messages to Ollama format")
         return messages
     
     def get_recent_context(self, num_turns: int = 10) -> List[Dict[str, str]]:
@@ -162,6 +166,14 @@ class ChatManager:
             full_response += chunk
             yield chunk
         
+        # Don't pollute history with failed requests
+        if is_error_response(full_response):
+            if self.history.turns and self.history.turns[-1].role == "user":
+                self.history.turns.pop()
+            return
+
+        full_response = sanitize_response(full_response, user_message)
+        
         # Parse the response
         parse_result = self.parser.parse(full_response)
         
@@ -204,6 +216,17 @@ class ChatManager:
         if not full_response:
             logger.warning("Empty response from Ollama")
             full_response = "I'm sorry, I didn't receive a response. Please try again."
+        
+        if is_error_response(full_response):
+            if self.history.turns and self.history.turns[-1].role == "user":
+                self.history.turns.pop()
+            return ParseResult(
+                is_tool_request=False,
+                message=full_response,
+                raw_response=full_response,
+            )
+
+        full_response = sanitize_response(full_response, user_message)
         
         # Parse the response
         parse_result = self.parser.parse(full_response)
