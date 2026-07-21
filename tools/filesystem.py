@@ -518,7 +518,7 @@ class DeleteFileTool(BaseTool):
 class CreateFolderTool(BaseTool):
     name = "create_folder"
     description = "Create a directory (and parent directories if needed)"
-    requires_confirmation = True
+    requires_confirmation = False
 
     def validate_args(self, **kwargs) -> tuple[bool, Optional[str]]:
         if "path" not in kwargs:

@@ -155,7 +155,6 @@ class SafetyWhitelist:
             "rename_symbol",
             # Scaffolding (creates many files)
             "scaffold_project",
-            "create_folder",
             "delete_folder",
             "rename_item",
             "move_item",
