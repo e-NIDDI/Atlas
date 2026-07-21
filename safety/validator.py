@@ -99,6 +99,22 @@ class SafetyValidator:
         elif tool_name == "run_tests":
             return self._validate_test_tool(tool_name, args, requires_confirmation)
         
+        # ── NEW: Code Execution tools ──────────────
+        elif tool_name in ["execute_file", "execute_code"]:
+            return self._validate_execution_tool(tool_name, args, requires_confirmation)
+        
+        # ── NEW: Code Analysis tools ────────────────
+        elif tool_name in ["lint_code", "format_code", "typecheck_code", "count_lines"]:
+            return self._validate_analysis_tool(tool_name, args, requires_confirmation)
+        
+        # ── NEW: Refactoring tools ──────────────────
+        elif tool_name in ["search_replace", "edit_lines", "rename_symbol"]:
+            return self._validate_refactor_tool(tool_name, args, requires_confirmation)
+        
+        # ── NEW: Scaffolding tools ──────────────────
+        elif tool_name in ["scaffold_project", "list_templates"]:
+            return self._validate_scaffold_tool(tool_name, args, requires_confirmation)
+        
         else:
             # Fallback: allow the tool with basic validation
             return ValidationResult(
@@ -458,6 +474,171 @@ class SafetyValidator:
             requires_confirmation=requires_confirmation
         )
     
+    def _validate_execution_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """Validate code execution tools."""
+        if tool_name == "execute_file":
+            if "path" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'path' for execute_file (received args: {args})",
+                    requires_confirmation=requires_confirmation,
+                )
+            # Validate the file path
+            path = args["path"]
+            if not self.path_validator.is_safe_path(str(path)):
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"File path is outside workspace: {path}",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        if tool_name == "execute_code":
+            if "code" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'code' for execute_code",
+                    requires_confirmation=requires_confirmation,
+                )
+            if "language" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'language' for execute_code",
+                    requires_confirmation=requires_confirmation,
+                )
+            # Limit code snippet size
+            code = args["code"]
+            if isinstance(code, str) and len(code) > 50000:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Code snippet too large (max 50KB)",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation,
+        )
+
+    def _validate_analysis_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """Validate code analysis tools."""
+        if tool_name in ("lint_code", "format_code", "typecheck_code", "count_lines"):
+            if "path" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'path' for {tool_name}",
+                    requires_confirmation=requires_confirmation,
+                )
+            path = args["path"]
+            if not self.path_validator.is_safe_path(str(path)):
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Path is outside workspace: {path}",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation,
+        )
+
+    def _validate_refactor_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """Validate refactoring tools."""
+        if tool_name == "search_replace":
+            if "pattern" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'pattern' for search_replace",
+                    requires_confirmation=requires_confirmation,
+                )
+            if "replacement" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'replacement' for search_replace",
+                    requires_confirmation=requires_confirmation,
+                )
+
+            path = args.get("path", ".")
+            if not self.path_validator.is_safe_path(str(path)):
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Path is outside workspace: {path}",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        if tool_name == "edit_lines":
+            if "path" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'path' for edit_lines",
+                    requires_confirmation=requires_confirmation,
+                )
+            if "edits" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'edits' for edit_lines",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        if tool_name == "rename_symbol":
+            if "old_name" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'old_name' for rename_symbol",
+                    requires_confirmation=requires_confirmation,
+                )
+            if "new_name" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'new_name' for rename_symbol",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation,
+        )
+
+    def _validate_scaffold_tool(
+        self,
+        tool_name: str,
+        args: Dict[str, Any],
+        requires_confirmation: bool
+    ) -> ValidationResult:
+        """Validate scaffolding tools."""
+        if tool_name == "scaffold_project":
+            if "name" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'name' for scaffold_project",
+                    requires_confirmation=requires_confirmation,
+                )
+            if "template" not in args:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message="Missing required argument 'template' for scaffold_project",
+                    requires_confirmation=requires_confirmation,
+                )
+
+        return ValidationResult(
+            is_valid=True,
+            requires_confirmation=requires_confirmation,
+        )
+
     def validate_command(
         self,
         command: str,

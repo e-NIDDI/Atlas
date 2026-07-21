@@ -38,6 +38,10 @@ from jarvis.tools.secretary import (
     SearchMemoryTool,
 )
 from jarvis.tools.commands import GitStatusTool, RunTestsTool
+from jarvis.tools.executor import ExecuteFileTool, ExecuteCodeTool
+from jarvis.tools.scaffold import ScaffoldProjectTool, ListTemplatesTool
+from jarvis.tools.analyzer import LintCodeTool, FormatCodeTool, TypeCheckTool, CountLinesTool
+from jarvis.tools.refactor import SearchReplaceTool, EditLinesTool, RenameSymbolTool
 
 from jarvis.logger import logger
 
@@ -65,6 +69,25 @@ def register_all_tools() -> None:
     tool_registry.register(SearchFilesTool())
     tool_registry.register(SearchContentTool())
     tool_registry.register(GetMetadataTool())
+
+    # ── Code Execution tools ───────────────────
+    tool_registry.register(ExecuteFileTool())
+    tool_registry.register(ExecuteCodeTool())
+
+    # ── Code Analysis tools ────────────────────
+    tool_registry.register(LintCodeTool())
+    tool_registry.register(FormatCodeTool())
+    tool_registry.register(TypeCheckTool())
+    tool_registry.register(CountLinesTool())
+
+    # ── Code Refactoring tools ─────────────────
+    tool_registry.register(SearchReplaceTool())
+    tool_registry.register(EditLinesTool())
+    tool_registry.register(RenameSymbolTool())
+
+    # ── Scaffolding tools ──────────────────────
+    tool_registry.register(ScaffoldProjectTool())
+    tool_registry.register(ListTemplatesTool())
 
     # ── Document tools ─────────────────────────
     tool_registry.register(ReadDocumentTool())

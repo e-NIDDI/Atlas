@@ -98,6 +98,10 @@ When the user is just CHATTING (greetings, questions, small talk), respond with 
 
 TOOLS:
   Filesystem: read_file, write_file, append_file, delete_file, create_folder, delete_folder, rename_item, move_item, copy_item, list_directory, search_files, search_content, get_file_metadata
+  Code Execution: execute_file <path> [language] [timeout], execute_code <code> <language> [timeout]
+  Code Analysis: lint_code <path> [linter], format_code <path> [formatter], typecheck_code <path>, count_lines <path>
+  Refactoring: search_replace <pattern> <replacement> [path] [regex], edit_lines <path> <edits>, rename_symbol <old_name> <new_name> [path]
+  Scaffolding: scaffold_project <name> <template> [description] [author], list_templates
   Documents: read_document, summarize_document, locate_in_document
   Projects: create_project, list_projects, rename_project
   Secretary: create_note, search_notes, list_notes, create_task, list_tasks, complete_task, remember_project_context, get_project_context, search_memory
@@ -146,6 +150,10 @@ Response rules:
 
 Use only these tools:
   Filesystem: read_file, write_file, append_file, delete_file, create_folder, delete_folder, rename_item, move_item, copy_item, list_directory, search_files, search_content, get_file_metadata
+  Code Execution: execute_file <path> [language], execute_code <code> <language>
+  Code Analysis: lint_code <path>, format_code <path>, typecheck_code <path>, count_lines <path>
+  Refactoring: search_replace <pattern> <replacement>, edit_lines <path> <edits>, rename_symbol <old_name> <new_name>
+  Scaffolding: scaffold_project <name> <template>, list_templates
   Documents: read_document, summarize_document, locate_in_document
   Projects: create_project, list_projects, rename_project
   Secretary: create_note, search_notes, list_notes, create_task, list_tasks, complete_task, remember_project_context, get_project_context, search_memory

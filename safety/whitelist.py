@@ -143,6 +143,25 @@ class SafetyWhitelist:
             "delete_file",
             "run_tests",
             "execute_command",
+            # Code execution (potentially dangerous)
+            "execute_file",
+            "execute_code",
+            # Code formatting (modifies files)
+            "format_code",
+            "typecheck_code",
+            # Refactoring (modifies files)
+            "search_replace",
+            "edit_lines",
+            "rename_symbol",
+            # Scaffolding (creates many files)
+            "scaffold_project",
+            "create_folder",
+            "delete_folder",
+            "rename_item",
+            "move_item",
+            "copy_item",
+            "append_file",
+            # Git operations
             "git_push",
             "git_commit",
             "git_merge",

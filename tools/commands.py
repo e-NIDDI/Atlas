@@ -16,34 +16,114 @@ class CommandManager:
     
     # Whitelist of allowed commands
     ALLOWED_COMMANDS = {
+        # Version control
         "git",
+        # Testing
         "pytest",
+        "python -m pytest",
+        "python3 -m pytest",
+        "python -m unittest",
+        "python3 -m unittest",
+        "npm test",
+        "npm run test",
+        # Python
         "python",
         "python3",
+        # JavaScript / Node
         "node",
         "npm",
+        "npx",
+        "yarn",
+        "pnpm",
+        # Go
+        "go",
+        # Rust
+        "cargo",
+        "rustc",
+        # System utilities
         "ls",
         "dir",
         "cat",
         "echo",
         "find",
         "grep",
+        "rg",
+        "ag",
+        "which",
+        "whereis",
+        "head",
+        "tail",
+        "wc",
+        "sort",
+        "uniq",
+        # Text processing
+        "sed",
+        "awk",
+        "diff",
+        # Build tools
+        "make",
+        "cmake",
+        "pip",
+        "pip3",
+        # Code quality
+        "ruff",
+        "flake8",
+        "pylint",
+        "mypy",
+        "black",
+        "isort",
+        "eslint",
+        "prettier",
+        # Archive info
+        "tar",
+        "zipinfo",
+        "unzip",
     }
     
     # Blacklisted commands (for extra safety)
     BLACKLISTED_COMMANDS = {
+        # Destructive
         "rm",
+        "rmdir",
         "del",
+        "erase",
         "shutdown",
         "reboot",
+        "halt",
+        "poweroff",
+        "format",
+        "fdisk",
+        "mkfs",
+        "dd",
+        # Network
         "curl",
         "wget",
+        "nc",
+        "netcat",
+        "ssh",
+        "scp",
+        "sftp",
+        "telnet",
+        "ftp",
+        # Permission
         "chmod",
         "chown",
+        "chgrp",
         "sudo",
         "su",
+        "doas",
+        "pkexec",
+        # Process
+        "kill",
+        "killall",
+        "pkill",
+        "systemctl",
+        "service",
+        # Dangerous eval
         "eval",
         "exec",
+        "source",
+        # System call equivalents
         "system",
         "os.system",
         "subprocess.call",
@@ -86,11 +166,14 @@ class CommandManager:
         
         # Additional validation for specific commands
         if command.lower() == "git":
-            # Only allow safe git commands
-            if args and args[0].lower() in {"status", "log", "diff", "branch", "remote", "show"}:
-                return True, None
-            else:
-                return False, f"Git command 'git {args[0] if args else ''}' is not allowed"
+            if not args:
+                return False, "No git subcommand provided"
+            # Block destructive git commands
+            unsafe = {"push", "push --force", "merge", "rebase", "reset --hard", "clean", "cherry-pick"}
+            subcmd = " ".join(a.lower() for a in args[:3])
+            if any(unsafe_prefix in subcmd for unsafe_prefix in ["push", "merge", "rebase", "reset --hard", "clean -f", "cherry-pick"]):
+                return False, f"Destructive git command not allowed: git {' '.join(args)}"
+            return True, None
         
         logger.debug(f"Command validated: {command} {' '.join(args)}")
         return True, None
