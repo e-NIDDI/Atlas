@@ -58,8 +58,9 @@ def detect_tool_intent(message: str) -> Optional[ToolRequest]:
         "rust": "rust-project",
         "shell": "shell-script",
         "html": "html-website",
+        "html5": "html-website",
     }
-    _LANG_RE = r"\b(python|node|react|go|rust|shell|web|html)\b"
+    _LANG_RE = r"\b(python|node|react|go|rust|shell|web|html|html5)\b"
 
     # "make / create / start / scaffold a(n) language project called X"
     m = re.search(
@@ -88,11 +89,13 @@ def detect_tool_intent(message: str) -> Optional[ToolRequest]:
     if m:
         lang = m.group(1)
         template = _TEMPLATE_MAP.get(lang, "python-package")
+        # Normalize: strip version numbers from lang names (e.g. html5 -> html)
+        display_lang = lang.rstrip("0123456789")
         default_name = f"{lang}-project"
         return ToolRequest(
             type="tool", tool="scaffold_project",
             args={"name": default_name, "template": template},
-            reason=f"User asked to create a {lang} project (no name given, using '{default_name}')",
+            reason=f"User asked to create a {display_lang} project (no name given, using '{default_name}')",
         )
 
     # ══════════════════════════════════════════════════════
