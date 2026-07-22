@@ -284,6 +284,125 @@ echo "Hello from $(basename $0)"
 """
 
 
+# HTML template generators
+
+def _index_html(project: str, desc: str, author: str, vars: Dict) -> str:
+    safe_name = project.replace("-", " ").title()
+    return f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{safe_name}</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>{safe_name}</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h2>Welcome to {safe_name}</h2>
+            <p>This is a starter HTML project.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; {datetime.now().year} {author}. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+'''
+
+
+def _style_css(project: str, desc: str, author: str, vars: Dict) -> str:
+    return '''/* Reset & base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #fafafa;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.5rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #3498db;
+}
+
+main {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+#hero {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: #ecf0f1;
+    border-radius: 8px;
+}
+
+#hero h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+'''
+
+
+def _script_js(project: str, desc: str, author: str, vars: Dict) -> str:
+    return '''// Main entry point
+document.addEventListener("DOMContentLoaded", () => {
+    console.log(`Hello from ${document.title}!`);
+});
+'''
+
+
 # ──────────────────────────────────────────────
 #  Template Registry
 # ──────────────────────────────────────────────
@@ -374,6 +493,17 @@ log_error() {
 """,
         },
         "post_create": "chmod +x bin/*.sh",
+    },
+    "html-website": {
+        "name": "HTML Website",
+        "description": "Static HTML website with CSS and JavaScript",
+        "files": {
+            "README.md": _readme_template,
+            ".gitignore": lambda p, d, a, v: "node_modules/\n.DS_Store\n",
+            "index.html": _index_html,
+            "style.css": _style_css,
+            "script.js": _script_js,
+        },
     },
     "empty": {
         "name": "Empty Project",

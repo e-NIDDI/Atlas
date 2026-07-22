@@ -57,21 +57,42 @@ def detect_tool_intent(message: str) -> Optional[ToolRequest]:
         "go": "go-module",
         "rust": "rust-project",
         "shell": "shell-script",
+        "html": "html-website",
     }
+    _LANG_RE = r"\b(python|node|react|go|rust|shell|web|html)\b"
+
+    # "make / create / start / scaffold a(n) language project called X"
     m = re.search(
-        r"\b(scaffold|generate)\b.*?"
-        r"\b(python|node|react|go|rust|shell|web)\b.*?"
-        r"\b(?:project|app|package|module)\b.*?"
+        r"\b(?:scaffold|generate|create|make|start|new)\b.*?"
+        + _LANG_RE + r".*?"
+        r"\b(?:project|app|package|module|site|website)\b.*?"
         r"(?:called|named)\s+['\"]?([\w-]+)['\"]?",
         lower,
     )
     if m:
-        lang = m.group(2)
+        lang = m.group(1)
         template = _TEMPLATE_MAP.get(lang, "python-package")
         return ToolRequest(
             type="tool", tool="scaffold_project",
-            args={"name": m.group(3), "template": template},
-            reason=f"User asked to scaffold a {lang} project",
+            args={"name": m.group(2), "template": template},
+            reason=f"User asked to create a {lang} project",
+        )
+
+    # "make a language project" (no name given) — auto-name it
+    m = re.search(
+        r"\b(?:scaffold|generate|create|make|start|new)\b.*?"
+        + _LANG_RE + r".*?"
+        r"\b(?:project|app|package|module|site|website)\b",
+        lower,
+    )
+    if m:
+        lang = m.group(1)
+        template = _TEMPLATE_MAP.get(lang, "python-package")
+        default_name = f"{lang}-project"
+        return ToolRequest(
+            type="tool", tool="scaffold_project",
+            args={"name": default_name, "template": template},
+            reason=f"User asked to create a {lang} project (no name given, using '{default_name}')",
         )
 
     # ══════════════════════════════════════════════════════
