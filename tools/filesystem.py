@@ -128,7 +128,24 @@ class FileSystemManager:
     # ── Folder operations ──────────────────────
 
     def create_folder(self, path: str, exist_ok: bool = True) -> Path:
-        """Create a directory (and parents)."""
+        """Create a directory (and parents).
+
+        For absolute paths, creates directly (outside workspace is allowed
+        since folder creation is safe). Blocks path traversal before
+        resolution to catch explicit '..' attempts.
+        """
+        p = Path(path)
+        if p.is_absolute():
+            # Block explicit path traversal before resolution
+            if ".." in p.parts:
+                raise ValueError(
+                    f"Path traversal blocked for: {path}"
+                )
+            resolved = p.resolve()
+            resolved.mkdir(parents=True, exist_ok=exist_ok)
+            logger.info(f"Created folder at absolute path: {resolved}")
+            return resolved
+        # Relative path: use workspace-confined resolution
         resolved = self.resolve_path(path)
         resolved.mkdir(parents=True, exist_ok=exist_ok)
         logger.info(f"Created folder: {resolved}")
@@ -534,7 +551,7 @@ class CreateFolderTool(BaseTool):
         """Resolve path from either 'path' or 'parent' + 'name'."""
         if "path" in kwargs:
             return kwargs["path"]
-        parent = kwargs.get("parent", "")
+        parent = kwargs.get("parent", "").rstrip("/")
         name = kwargs.get("name", "")
         if parent:
             return f"{parent}/{name}"

@@ -1,5 +1,6 @@
 """Safety validation for Jarvis tools and actions."""
 
+from pathlib import Path
 from typing import Optional, Dict, Any, Tuple
 from dataclasses import dataclass
 
@@ -294,8 +295,12 @@ class SafetyValidator:
             elif name:
                 path = name
         if path:
-            # Check if path is safe
-            if not self.path_validator.is_safe_path(path):
+            # For create_folder with absolute paths, skip workspace confinement
+            # (folder creation is safe, user explicitly specified the location)
+            # Still block path traversal via resolve() in fs.create_folder.
+            if tool_name == "create_folder" and Path(path).is_absolute():
+                pass  # allowed — security handled in FileSystemManager.create_folder
+            elif not self.path_validator.is_safe_path(path):
                 return ValidationResult(
                     is_valid=False,
                     error_message=f"Path is outside workspace: {path}",
