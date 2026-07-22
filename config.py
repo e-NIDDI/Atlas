@@ -13,7 +13,7 @@ class Config:
     # Workspace settings
     workspace_root: Path = field(
         default_factory=lambda: Path(
-            os.environ.get("JARVIS_WORKSPACE", str(Path.home()))
+            os.environ.get("JARVIS_WORKSPACE", str(Path.cwd()))
         ).expanduser()
     )
 
@@ -73,7 +73,10 @@ class Config:
         """Ensure directories exist."""
         self.workspace_root.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        self.db_path = self.workspace_root / "jarvis.db"
+        # Database: keep in home dir by default (persists across CWDs).
+        # Only move into workspace if user explicitly set JARVIS_WORKSPACE.
+        if "JARVIS_WORKSPACE" in os.environ:
+            self.db_path = self.workspace_root / "jarvis.db"
 
     @property
     def ollama_options(self) -> dict:
