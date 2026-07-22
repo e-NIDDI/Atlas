@@ -521,16 +521,29 @@ class CreateFolderTool(BaseTool):
     requires_confirmation = False
 
     def validate_args(self, **kwargs) -> tuple[bool, Optional[str]]:
-        if "path" not in kwargs:
-            return False, "Missing required argument: path"
-        return True, None
+        if "path" in kwargs:
+            return True, None
+        if "name" in kwargs:
+            return True, None
+        return False, "Missing required argument: provide 'path', 'name', or 'parent' + 'name'"
 
     def get_required_args(self) -> List[str]:
         return ["path"]
 
+    def _resolve_path(self, **kwargs) -> str:
+        """Resolve path from either 'path' or 'parent' + 'name'."""
+        if "path" in kwargs:
+            return kwargs["path"]
+        parent = kwargs.get("parent", "")
+        name = kwargs.get("name", "")
+        if parent:
+            return f"{parent}/{name}"
+        return name
+
     async def execute(self, **kwargs) -> ToolResult:
         try:
-            resolved = fs.create_folder(kwargs["path"])
+            path = self._resolve_path(**kwargs)
+            resolved = fs.create_folder(path)
             return ToolResult(
                 success=True,
                 message=f"Folder created: {resolved}",

@@ -232,11 +232,15 @@ class SafetyValidator:
             "create_folder", "delete_folder", "get_file_metadata",
         ]
         if tool_name in path_required_tools and "path" not in args:
-            return ValidationResult(
-                is_valid=False,
-                error_message=f"Missing required argument 'path' for {tool_name} (received args: {args})",
-                requires_confirmation=requires_confirmation
-            )
+            # Special case: create_folder accepts 'parent' + 'name' instead of 'path'
+            if tool_name == "create_folder" and "name" in args:
+                pass  # parent + name is fine
+            else:
+                return ValidationResult(
+                    is_valid=False,
+                    error_message=f"Missing required argument 'path' for {tool_name} (received args: {args})",
+                    requires_confirmation=requires_confirmation
+                )
         
         # Tools that require "content"
         if tool_name in ["write_file", "append_file"] and "content" not in args:
@@ -281,6 +285,14 @@ class SafetyValidator:
         
         # Validate paths
         path = args.get("path") or args.get("old_path") or args.get("source")
+        # Special case: create_folder accepts parent + name
+        if not path and tool_name == "create_folder":
+            parent = args.get("parent", "")
+            name = args.get("name", "")
+            if parent and name:
+                path = f"{parent}/{name}"
+            elif name:
+                path = name
         if path:
             # Check if path is safe
             if not self.path_validator.is_safe_path(path):
